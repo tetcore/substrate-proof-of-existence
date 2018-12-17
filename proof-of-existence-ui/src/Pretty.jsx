@@ -7,11 +7,16 @@ export class Pretty extends ReactiveComponent {
 		super(["value", "default", "className"])
 	}
 	render () {
-		if (this.ready() || this.props.default == null) {
-			return (<span className={this.state.className} name={this.props.name}>
-				{(this.props.prefix || '') + pretty(this.state.value) + (this.props.suffix || '')}
-			</span>)
-		} else {
+
+		try {
+			if (this.ready() || this.props.default == null) {
+				return (<span className={this.state.className} name={this.props.name}>
+					{(this.props.prefix || '') + pretty(this.state.value) + (this.props.suffix || '')}
+				</span>)
+			} else {
+				return <span>{this.props.default}</span>
+			}
+		} catch (e) {
 			return <span>{this.props.default}</span>
 		}
 	}
