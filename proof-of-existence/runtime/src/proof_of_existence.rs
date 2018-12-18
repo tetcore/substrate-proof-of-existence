@@ -47,5 +47,5 @@ decl_event!(
     {
         ClaimCreated(AccountId, Moment, Vec<u8>),
 		ClaimRevoked(AccountId, Vec<u8>),
-	}
+    }
 );

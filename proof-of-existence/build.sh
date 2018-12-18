@@ -2,7 +2,7 @@
 
 set -e
 
-PROJECT_ROOT=`git rev-parse --show-toplevel`
+PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 export CARGO_INCREMENTAL=0
 
@@ -17,7 +17,7 @@ cd $ROOT
 for SRC in runtime/wasm
 do
   echo "${bold}Building webassembly binary in $SRC...${normal}"
-  cd "$PROJECT_ROOT/proof-of-existence/$SRC"
+  cd "$PROJECT_ROOT/$SRC"
 
   ./build.sh
 
