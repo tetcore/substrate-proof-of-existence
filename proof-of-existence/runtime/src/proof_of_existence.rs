@@ -35,7 +35,7 @@ decl_module! {
 }
 
 decl_storage! {
-	trait Store for Module<T: Trait> as RuntimeExampleStorage {
+	trait Store for Module<T: Trait> as POEStorage {
 		Proofs get(proofs): map Vec<u8> => (T::AccountId, T::Moment);
 	}
 }
