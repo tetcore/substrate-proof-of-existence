@@ -11,13 +11,13 @@ import { BalanceBond } from './BalanceBond.jsx';
 import { InputBond } from './InputBond.jsx';
 import { TransactButton } from './TransactButton.jsx';
 import { FileUploadBond } from './FileUploadBond.jsx';
-import { FileDigestBond } from './FileDigestBond.jsx';
 import { StakingStatusLabel } from './StakingStatusLabel';
 import { WalletList, SecretItem } from './WalletList';
 import { AddressBookList } from './AddressBookList';
 import { TransformBondButton } from './TransformBondButton';
 import { Pretty } from './Pretty';
 import { DigestWrapper } from './DigestWrapper';
+import { FileDigestBond } from './FileDigestBond.jsx';
 
 export class App extends ReactiveComponent {
 	constructor() {
@@ -247,7 +247,7 @@ export class App extends ReactiveComponent {
 					<FileDigestBond bond={this.poeDigest} content='Select File' />
 
 					<If condition={this.poeDigest.ready()} then={<span>
-						<DigestWrapper value={runtime.proof_of_existence.proofs(this.poeDigest)} account={this.poeAccount}/>
+						<DigestWrapper value={runtime.proof_of_existence.proofs(this.poeDigest)} account={this.poeAccount} />
 					</span>} />
 				</div>
 				<TransactButton

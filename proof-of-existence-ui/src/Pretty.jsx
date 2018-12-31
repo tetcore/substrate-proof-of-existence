@@ -3,10 +3,10 @@ import { ReactiveComponent } from 'oo7-react';
 import { pretty } from 'oo7-substrate';
 
 export class Pretty extends ReactiveComponent {
-	constructor() {
+	constructor () {
 		super(["value", "default", "className"])
 	}
-	render() {
+	render () {
 		if (this.ready() || this.props.default == null) {
 			return (<span className={this.state.className} name={this.props.name}>
 				{(this.props.prefix || '') + pretty(this.state.value) + (this.props.suffix || '')}
