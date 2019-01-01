@@ -23,7 +23,7 @@ export class FileDigestBond extends ReactiveComponent {
 			var fileReader = new FileReader()
 			fileReader.onloadend = e => {
                 let fileContents = new Uint8Array(e.target.result)
-                let fileDigest = "0x" + XXH.h64( fileContents.buffer, 0xABCD ).toString(16)
+                let fileDigest = "0x" + XXH.h64( fileContents.buffer, 0 ).toString(16)
                 this.props.bond.trigger(fileDigest)
                 this.setState({length: fileContents.length, digest: fileDigest})
 			}

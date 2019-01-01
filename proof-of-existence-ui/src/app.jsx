@@ -16,7 +16,7 @@ import { WalletList, SecretItem } from './WalletList';
 import { AddressBookList } from './AddressBookList';
 import { TransformBondButton } from './TransformBondButton';
 import { Pretty } from './Pretty';
-import { DigestWrapper } from './DigestWrapper';
+import { DigestTag } from './DigestTag';
 import { FileDigestBond } from './FileDigestBond.jsx';
 
 export class App extends ReactiveComponent {
@@ -245,10 +245,7 @@ export class App extends ReactiveComponent {
 				</div>
 				<div>
 					<FileDigestBond bond={this.poeDigest} content='Select File' />
-
-					<If condition={this.poeDigest.ready()} then={<span>
-						<DigestWrapper value={runtime.proof_of_existence.proofs(this.poeDigest)} account={this.poeAccount} />
-					</span>} />
+					<DigestTag value={runtime.proof_of_existence.proofs(this.poeDigest)} account={this.poeAccount} />
 				</div>
 				<TransactButton
 					content="Claim File"
