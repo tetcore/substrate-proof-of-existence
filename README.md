@@ -7,6 +7,7 @@ A simple [Proof of Existence](https://en.wikipedia.org/wiki/Proof_of_Existence) 
 1. Start your dev chain
     ```
     cd proof-of-existence
+    ./build.sh
     cargo build --release
     ./target/release/proof-of-existence --dev
     ```
