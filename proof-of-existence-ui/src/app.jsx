@@ -245,14 +245,14 @@ export class App extends ReactiveComponent {
 				</div>
 				<div>
 					<FileDigestBond bond={this.poeDigest} content='Select File' />
-					<DigestTag value={runtime.proof_of_existence.proofs(this.poeDigest)} account={this.poeAccount} />
+					<DigestTag value={runtime.proofOfExistence.proofs(this.poeDigest)} account={this.poeAccount} />
 				</div>
 				<TransactButton
 					content="Claim File"
 					icon='lock'
 					tx={{
 						sender: this.poeAccount,
-						call: calls.proof_of_existence.createClaim(this.poeDigest)
+						call: calls.proofOfExistence.createClaim(this.poeDigest)
 					}}
 				/>
 			</Segment>

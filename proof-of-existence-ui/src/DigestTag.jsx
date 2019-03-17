@@ -10,13 +10,13 @@ export class DigestTag extends ReactiveComponent {
 
     readyRender() {
         if (this.state.value) {
-            let time = this.state.value[1];
+            let time = this.state.value[0][1];
 
             // Check if time is 0, which implies not claimed
             if (time.number == 0) {
                 return <Label basic color='green' pointing="left"><span>Unclaimed!</span></Label>
             } else {
-                let owner = ss58Encode(this.state.value[0]);
+                let owner = ss58Encode(this.state.value[0][0]);
 
                 if (ss58Encode(this.state.account) == owner) {
                     return <Label basic color='green' pointing="left"><span>Owner: You!&emsp;|&emsp;When: {time.toLocaleDateString()}</span></Label>
