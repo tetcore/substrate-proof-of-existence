@@ -198,7 +198,7 @@ export class App extends ReactiveComponent {
 					content="Send"
 					icon='send'
 					tx={{
-						sender: runtime.balances.tryIndex(this.source),
+						sender: runtime.indices.tryIndex(this.source),
 						call: calls.balances.transfer(this.destination, this.amount)
 					}}
 				/>
@@ -209,7 +209,7 @@ export class App extends ReactiveComponent {
 					<Icon name='search' />
 					<Header.Content>
 						Runtime Upgrade
-						<Header.Subheader>Upgrade the runtime using the UpgradeKey module</Header.Subheader>
+						<Header.Subheader>Upgrade the runtime using the Sudo module</Header.Subheader>
 					</Header.Content>
 				</Header>
 				<div style={{ paddingBottom: '1em' }}></div>
@@ -218,8 +218,8 @@ export class App extends ReactiveComponent {
 					content="Upgrade"
 					icon='warning'
 					tx={{
-						sender: runtime.upgrade_key.key,
-						call: calls.upgrade_key.upgrade(this.runtime)
+						sender: runtime.sudo.key,
+						call: calls.sudo.sudo(calls.consensus.setCode(this.runtime))
 					}}
 				/>
 			</Segment>

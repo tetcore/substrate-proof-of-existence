@@ -1,6 +1,7 @@
-use primitives::{AuthorityId, ed25519};
-use proof_of_existence_runtime::{
-	AccountId, GenesisConfig, ConsensusConfig, TimestampConfig, BalancesConfig, UpgradeKeyConfig,
+use primitives::{Ed25519AuthorityId, ed25519};
+use node_template_runtime::{
+	AccountId, GenesisConfig, ConsensusConfig, TimestampConfig, BalancesConfig,
+	SudoConfig, IndicesConfig, FeesConfig,
 };
 use substrate_service;
 
@@ -69,33 +70,38 @@ impl Alternative {
 	pub(crate) fn from(s: &str) -> Option<Self> {
 		match s {
 			"dev" => Some(Alternative::Development),
-			"local" => Some(Alternative::LocalTestnet),
+			"" | "local" => Some(Alternative::LocalTestnet),
 			_ => None,
 		}
 	}
 }
 
-fn testnet_genesis(initial_authorities: Vec<AuthorityId>, endowed_accounts: Vec<AccountId>, upgrade_key: AccountId) -> GenesisConfig {
+fn testnet_genesis(initial_authorities: Vec<Ed25519AuthorityId>, endowed_accounts: Vec<AccountId>, root_key: AccountId) -> GenesisConfig {
 	GenesisConfig {
 		consensus: Some(ConsensusConfig {
-			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/proof_of_existence_runtime.compact.wasm").to_vec(),
+			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/node_template_runtime_wasm.compact.wasm").to_vec(),
 			authorities: initial_authorities.clone(),
 		}),
 		system: None,
 		timestamp: Some(TimestampConfig {
 			period: 5,					// 5 second block time.
 		}),
+		indices: Some(IndicesConfig {
+			ids: endowed_accounts.clone(),
+		}),
 		balances: Some(BalancesConfig {
-			transaction_base_fee: 1,
-			transaction_byte_fee: 0,
 			existential_deposit: 500,
 			transfer_fee: 0,
 			creation_fee: 0,
-			reclaim_rebate: 0,
 			balances: endowed_accounts.iter().map(|&k|(k, (1 << 60))).collect(),
+			vesting: vec![],
 		}),
-		upgrade_key: Some(UpgradeKeyConfig {
-			key: upgrade_key,
+		sudo: Some(SudoConfig {
+			key: root_key,
 		}),
+		fees: Some(FeesConfig {
+			transaction_base_fee: 1,
+			transaction_byte_fee: 0,
+		})
 	}
 }
