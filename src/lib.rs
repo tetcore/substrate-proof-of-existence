@@ -1,12 +1,16 @@
-use support::{decl_module, decl_storage, decl_event, ensure,
-    StorageMap, dispatch::Result, traits::Currency};
-use rstd::vec::Vec;
+use srml_support::{decl_module, decl_storage, decl_event, ensure,
+    StorageMap, dispatch::Result};
+use srml_support::traits::{Currency, ReservableCurrency};
+use sr_std::vec::Vec;
 use system::ensure_signed;
-use runtime_primitives::traits::As;
+use sr_primitives::traits::As;
 
 const POE_FEE: u64 = 1000;
 
+type BalanceOf<T> = <<T as Trait>::Currency as Currency<<T as system::Trait>::AccountId>>::Balance;
+
 pub trait Trait: timestamp::Trait + balances::Trait {
+    type Currency: ReservableCurrency<Self::AccountId>;
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 }
 
@@ -36,7 +40,7 @@ decl_module! {
             ensure!(!<Proofs<T>>::exists(&digest), "This digest has already been claimed");
             let time = <timestamp::Module<T>>::now();
 
-            <balances::Module<T>>::reserve(&sender, <T::Balance as As<u64>>::sa(POE_FEE))?;
+            T::Currency::reserve(&sender, BalanceOf::<T>::sa(POE_FEE))?;
             <Proofs<T>>::insert(&digest, (sender.clone(), time.clone()));
 
             Self::deposit_event(RawEvent::ClaimCreated(sender, time, digest));
@@ -52,7 +56,7 @@ decl_module! {
             ensure!(sender == owner, "You must own this claim to revoke it");
 
             <Proofs<T>>::remove(&digest);
-            <balances::Module<T>>::unreserve(&sender, <T::Balance as As<u64>>::sa(POE_FEE));
+            T::Currency::unreserve(&sender, BalanceOf::<T>::sa(POE_FEE));
 
             Self::deposit_event(RawEvent::ClaimRevoked(sender, digest));
             Ok(())
