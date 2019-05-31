@@ -1,3 +1,6 @@
+// Ensure we're `no_std` when compiling for Wasm.
+#![cfg_attr(not(feature = "std"), no_std)]
+
 use srml_support::{decl_module, decl_storage, decl_event, ensure,
     StorageMap, dispatch::Result};
 use srml_support::traits::{Currency, ReservableCurrency};
