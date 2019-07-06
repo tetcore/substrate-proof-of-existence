@@ -1,18 +1,18 @@
 // Ensure we're `no_std` when compiling for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use srml_support::{decl_module, decl_storage, decl_event, ensure,
+use support::{decl_module, decl_storage, decl_event, ensure,
     StorageMap, dispatch::Result};
-use srml_support::traits::{Currency, ReservableCurrency};
-use sr_std::vec::Vec;
+use support::traits::{Currency, ReservableCurrency};
+use rstd::vec::Vec;
 use system::ensure_signed;
-use sr_primitives::traits::As;
+use runtime_primitives::traits::As;
 
 const POE_FEE: u64 = 1000;
 
 type BalanceOf<T> = <<T as Trait>::Currency as Currency<<T as system::Trait>::AccountId>>::Balance;
 
-pub trait Trait: timestamp::Trait + balances::Trait {
+pub trait Trait: timestamp::Trait {
     type Currency: ReservableCurrency<Self::AccountId>;
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 }
