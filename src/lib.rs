@@ -66,3 +66,98 @@ decl_module! {
         }
     }
 }
+
+/// tests for this module
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	use runtime_io::with_externalities;
+	use primitives::{H256, Blake2Hasher};
+	use support::{impl_outer_origin, assert_ok, assert_noop};
+	use runtime_primitives::{
+		BuildStorage,
+		traits::{BlakeTwo256, IdentityLookup},
+		testing::{Digest, DigestItem, Header}
+	};
+
+	impl_outer_origin! {
+		pub enum Origin for Test {}
+	}
+
+	#[derive(Clone, Eq, PartialEq)]
+	pub struct Test;
+	impl system::Trait for Test {
+		type Origin = Origin;
+		type Index = u64;
+		type BlockNumber = u64;
+		type Hash = H256;
+		type Hashing = BlakeTwo256;
+		type Digest = Digest;
+		type AccountId = u64;
+		type Lookup = IdentityLookup<Self::AccountId>;
+		type Header = Header;
+		type Event = ();
+		type Log = DigestItem;
+	}
+	impl balances::Trait for Test {
+		type Balance = u64;
+		type OnNewAccount = ();
+		type OnFreeBalanceZero = ();
+		type Event = ();
+		type TransactionPayment = ();
+		type TransferPayment = ();
+		type DustRemoval = ();
+    }
+    impl timestamp::Trait for Test {
+        type Moment = u64;
+        type OnTimestampSet = ();
+    }
+	impl Trait for Test {
+		type Event = ();
+        type Currency = balances::Module<Test>;
+	}
+    type Balances = balances::Module<Test>;
+	type POEModule = Module<Test>;
+
+	// This function basically just builds a genesis storage key/value store according to
+	// our desired mockup.
+	fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
+		let mut t = system::GenesisConfig::<Test>::default().build_storage().unwrap().0;
+        t.extend(balances::GenesisConfig::<Test>{
+			balances: vec![(1, 10000), (2, 10000)],
+			transaction_base_fee: 0,
+			transaction_byte_fee: 0,
+			transfer_fee: 0,
+			creation_fee: 0,
+			existential_deposit: 0,
+			vesting: vec![],
+        }.build_storage().unwrap().0);
+        t.into()
+
+	}
+
+	#[test]
+	fn it_works() {
+		with_externalities(&mut new_test_ext(), || {
+			// Have account 1 create a claim
+			assert_ok!(POEModule::create_claim(Origin::signed(1), vec![0]));
+            // Check that account 1 reserved their deposit for creating a claim
+            assert_eq!(Balances::free_balance(&1), 9000);
+            assert_eq!(Balances::reserved_balance(&1), 1000);
+            // Check that account 2 cannot create the same claim
+            assert_noop!(POEModule::create_claim(Origin::signed(2), vec![0]), "This digest has already been claimed");
+            // Check that account 2 cannot revoke a claim they do not own
+            assert_noop!(POEModule::revoke_claim(Origin::signed(2), vec![0]), "You must own this claim to revoke it");
+            // Check that account 2 cannot revoke some non-existent claim
+            assert_noop!(POEModule::revoke_claim(Origin::signed(2), vec![1]), "This digest has not been claimed yet");
+            // Check that account 1 can revoke their claim
+            assert_ok!(POEModule::revoke_claim(Origin::signed(1), vec![0]));
+            // Check that account 1 got back their deposit
+            assert_eq!(Balances::free_balance(&1), 10000);
+            assert_eq!(Balances::reserved_balance(&1), 0);
+            // Check that account 2 can now claim this digest
+            assert_ok!(POEModule::create_claim(Origin::signed(2), vec![0]));
+		});
+	}
+}
