@@ -1,26 +1,24 @@
-# substrate-module-template
+# Substrate Proof of Existence Module
 
-This is a template for a Substrate runtime module which lives as its own crate so it can be imported into multiple other runtimes. It is based on the ["template" module](https://github.com/paritytech/substrate/blob/v1.0/node-template/runtime/src/template.rs) which is included with the [Substrate node template](https://github.com/paritytech/substrate/tree/v1.0/node-template).
-
-Check out the [HOWTO](HOWTO.md) to learn how to use this for your own runtime module.
-
-This README should act as a general template for distributing your module to others.
+This is a simple Substrate runtime module to store online distributed [proof of existence](https://www.proofofexistence.com/) for any file.
 
 ## Purpose
 
-This module acts as a template for building other runtime modules.
+This module enables users submit a proof of existence for a file. This proof of existence may also be used as a soft measure of ownership.
 
-It currently allows a user to put a `u32` value into storage, which triggers a runtime event.
+Files are not directly uploaded to the blockchain. Instead, a [file digest](https://en.wikipedia.org/wiki/File_verification) is generated, and the resulting digest is stored on chain with the time of upload and the user who made the claim.
+
+Anyone who has the source file can also generate the same digest and check the proof of existence on-chain.
 
 ## Dependencies
 
 ### Traits
 
-This module does not depend on any externally defined traits.
+This module depends on an implementation of the `Currency` trait. This can be done by the SRML Balances module.
 
 ### Modules
 
-This module does not depend on any other SRML or externally developed modules.
+This module depends on the SRML Timestamp module.
 
 ## Installation
 
@@ -29,9 +27,10 @@ This module does not depend on any other SRML or externally developed modules.
 To add this module to your runtime, simply include the following to your runtime's `Cargo.toml` file:
 
 ```rust
-[dependencies.substrate-module-template]
+[dependencies.poe]
 default_features = false
-git = 'https://github.com/shawntabrizi/substrate-module-template.git'
+package = 'proof-of-existence'
+git = 'https://github.com/substrate-developer-hub/substrate-proof-of-existence.git'
 ```
 
 and update your runtime's `std` feature to include this module:
@@ -39,7 +38,7 @@ and update your runtime's `std` feature to include this module:
 ```rust
 std = [
     ...
-    'example_module/std',
+    'poe/std',
 ]
 ```
 
@@ -48,8 +47,8 @@ std = [
 You should implement it's trait like so:
 
 ```rust
-/// Used for the module test_module
-impl substrate_module_template::Trait for Runtime {
+impl poe::Trait for Runtime {
+	type Currency = Balances;
 	type Event = Event;
 }
 ```
@@ -57,7 +56,7 @@ impl substrate_module_template::Trait for Runtime {
 and include it in your `construct_runtime!` macro:
 
 ```rust
-ExampleModule: substrate_module_template::{Module, Call, Storage, Event<T>},
+POE: poe::{Module, Call, Storage, Event<T>},
 ```
 
 ### Genesis Configuration
@@ -71,5 +70,3 @@ You can view the reference docs for this module by running:
 ```
 cargo doc --open
 ```
-
-or by visiting this site: <Add Your Link>
