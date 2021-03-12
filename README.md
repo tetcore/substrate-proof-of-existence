@@ -1,6 +1,6 @@
-# Substrate Proof of Existence Module
+# Tetcore Proof of Existence Module
 
-This is a simple Substrate runtime module to store online distributed [proof of existence](https://www.proofofexistence.com/) for any file.
+This is a simple Tetcore runtime module to store online distributed [proof of existence](https://www.proofofexistence.com/) for any file.
 
 ## Purpose
 
